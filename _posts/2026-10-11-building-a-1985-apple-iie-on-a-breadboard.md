@@ -5,7 +5,7 @@ author: Michael McShane
 date: 2026-10-11 21:30:00 -0700
 categories: [Tech]
 tags: [tech, '6502', raspberry-pi, retro]
-pin: false
+pin: true
 toc: true
 ---
 
