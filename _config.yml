@@ -13,9 +13,9 @@ timezone: America/Los_Angeles
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
-title: mjmcshane.com
+title: Field Report
 
-tagline: Tech Support Engineer · C++26 · Python · Tesla Powerwall 3
+tagline: Tech field reports from a Clovis bench
 
 description: >-
   Senior tech support engineer specializing in C++26 and Python,
