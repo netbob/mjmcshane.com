@@ -49,4 +49,7 @@ Associate of Science in Computer Science — Control Data Institute. Also studie
 ---
 
 *Michael McShane — Clovis, California. The long version of this page is the site itself.*
+
 *Field Report is free to read and to share. If a post was worth a cup of coffee, the jar is here: [buymeacoffee.com/Netbob](https://buymeacoffee.com/Netbob).*
+
+*New Field Reports can follow you instead: subscribe in any feed reader — [mjmcshane.com/feed.xml](https://mjmcshane.com/feed.xml). No account, no algorithm.*
