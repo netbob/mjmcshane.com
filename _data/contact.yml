@@ -16,6 +16,10 @@
 - type: rss
   icon: "fas fa-rss"
   noblank: true
+  
+- type: buymeacoffee
+  icon: "fas fa-mug-hot"
+  url: https://buymeacoffee.com/Netbob
 # Uncomment and complete the url below to enable more contact options
 #
 # - type: mastodon
