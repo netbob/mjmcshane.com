@@ -69,3 +69,5 @@ If you run WordPress, Drupal, Joomla, or anything else on PHP, here is the whole
 5. **Assume the pre-patch window mattered.** If your PHP was internet-facing before the fix, worker memory may have been readable. Rotate the secrets that matter — database passwords, API keys — after you patch, not before.
 
 Around here the fire is real; it's just not at this address. If it's at yours, the patch is the day. Everything else is commentary — including, I'll grant you, this post.
+
+As I was commiting and pushing this post through my Textastic/Working Copy/Github workflow the internet starting feeding upon itself. The news broke this morning that Github was having issues and delayed this post by 35 minutes. Ironic much?
