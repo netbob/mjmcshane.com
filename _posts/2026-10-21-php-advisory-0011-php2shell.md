@@ -70,4 +70,8 @@ If you run WordPress, Drupal, Joomla, or anything else on PHP, here is the whole
 
 Around here the fire is real; it's just not at this address. If it's at yours, the patch is the day. Everything else is commentary — including, I'll grant you, this post.
 
-As I was commiting and pushing this post through my Textastic/Working Copy/Github workflow the internet starting feeding upon itself. The news broke this morning that Github was having issues and delayed this post by 35 minutes. Ironic much?
+## Postscript
+
+The irony, since it's the first thing I'd point out in someone else's post: this advisory — about an infrastructure failure — was itself delayed by an infrastructure failure. I pushed it at 8:52 this morning. GitHub was mid-incident, its push events to Cloudflare were degraded, and the build that publishes this site never started. The file sat complete and correct on GitHub for about 35 minutes while the site went on serving yesterday's version, until the missed event replayed, the build caught up, and the post went live.
+
+And for the record, because it was the first question I asked myself: no, it was not a PHP issue on the back end. There is no PHP on the back end. That is, rather, the point of everything above.
