@@ -15,7 +15,7 @@ The honest answer is that none of mine came from a settings page. They accumulat
 
 ## The money rule came first, and it cost a locked bank account
 
-My Muse buys things for me through a payment wallet. The first time it used a new payment service at two new merchants in one afternoon, my bank flagged both charges as fraud, locked the account, and made me change my username and password before I could vouch for my own purchases — live, on the phone, while the charges sat pending. The approval emails added confusion of their own: they showed each total plus five dollars of headroom, a ceiling that looked exactly like an overcharge.
+Muse can buy things for me through a payment wallet. The first time it would use a new payment service at two new merchants in one afternoon, my bank could flag both charges as fraud, lock the account, and make me change my username and password before I could vouch for my own purchases — live, on the phone, while the charges sat pending. The approval emails would add confusion of their own: they showed each total plus five dollars of headroom, a ceiling that looked exactly like an overcharge.
 
 Nothing was stolen. Nothing was even wrong. But the rule that came out of it is permanent: **no purchase without the exact item and the exact total shown to me first, and my yes covers that charge only.** A yes is not a standing yes. An approval ceiling is not a transaction. The bank app, not the email, is the money truth.
 
