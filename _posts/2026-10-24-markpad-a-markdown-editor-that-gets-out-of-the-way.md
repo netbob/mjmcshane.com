@@ -4,6 +4,11 @@ description: A fast, minimal markdown editor for Windows with a GitHub-friendly 
 author: netbob
 categories: [Tech]
 tags: [MarkPad, markdown, Windows]
+image:
+  path: /assets/img/markpad-card.png
+  width: 1200
+  height: 628
+  alt: MarkPad — a minimal markdown editor
 toc: true
 pin: false
 ---
