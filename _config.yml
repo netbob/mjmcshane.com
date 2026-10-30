@@ -179,6 +179,11 @@ defaults:
       # DO NOT modify the following parameter unless you are confident enough
       # to update the code of all other post links in this project.
       permalink: /posts/:title/
+      image:
+        path: /assets/img/default-card.png
+        width: 1200
+        height: 628
+        alt: Field Report
   - scope:
       path: _drafts
     values:
