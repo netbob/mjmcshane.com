@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — Encrypted</title>
+<!--
+  Secure contact widget for mjmcshane.com / netbob.org / techpointpro.com.
+  How it works: the visitor's message is encrypted IN THE BROWSER with
+  Michael McShane's PGP public key (below). Only the ciphertext leaves
+  the browser, POSTed to a Cloudflare Worker that emails it to him.
+  Plaintext exists in exactly two places: the visitor's browser, and
+  Michael's machine after he decrypts it.
+
+  SETUP (do once, in this file):
+  1. WORKER_URL is already filled in below (secure-contact Worker,
+     deployed Oct 31, 2026).
+  2. Replace YOUR_TURNSTILE_SITE_KEY with your Cloudflare Turnstile
+     site key (Dashboard -> Turnstile -> Add site, covering your
+     three domains). The matching secret key goes in the Worker.
+  3. Drop this file into each site as contact.html (or link to one
+     canonical copy from the other two sites).
+
+  The public key below is public by design. The recipient's email
+  address appears NOWHERE in this file — it lives only as a secret
+  in the Worker.
+-->
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; max-width: 640px;
+         margin: 2em auto; padding: 0 1em; line-height: 1.5; color: #222; }
+  label { display: block; margin-top: 1em; font-weight: 600; }
+  textarea, input[type="text"] { width: 100%; box-sizing: border-box;
+         margin-top: 0.25em; padding: 0.5em; font: inherit; }
+  textarea { min-height: 10em; }
+  button { margin-top: 1em; padding: 0.6em 1.2em; font: inherit; cursor: pointer; }
+  button:disabled { cursor: wait; opacity: 0.6; }
+  #status { margin-top: 1em; }
+  #status.ok { color: #1a6b1a; }
+  #status.err { color: #a00; }
+  code { word-break: break-all; font-size: 0.85em; }
+  .small { font-size: 0.9em; color: #555; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/openpgp@5.11.2/dist/openpgp.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+<h1>Contact — encrypted</h1>
+<p>Write me a message. It is encrypted in your browser with my public
+key before it leaves this page, so nobody between you and me — not a
+mail harvester, not a relay — can read it. Only I can decrypt it.</p>
+<p class="small">My key fingerprint, for cross-checking against the key
+published on each of my sites:<br>
+<code>F195 0F9F A38A 28DA 2303 431C 1A57 9411 7A22 8B99</code></p>
+
+<form id="contact-form">
+  <label for="message">Message</label>
+  <textarea id="message" required placeholder="Your message…"></textarea>
+
+  <label for="reply-to">How can I reply? (optional)</label>
+  <input type="text" id="reply-to" placeholder="An email address, a Signal number, …">
+  <p class="small">This is encrypted along with your message, not sent
+  as a separate field — so even the delivery service never sees it.</p>
+
+  <div class="cf-turnstile" data-sitekey="0x4AAAAAAFu3IQ5iYNVuoNV7"></div>
+
+  <button type="submit" id="submit">Encrypt &amp; send</button>
+  <p id="status" aria-live="polite"></p>
+</form>
+
+<script>
+const WORKER_URL = "https://secure-contact.mmcshane.workers.dev/contact";
+
+const PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEaua4wBYJKwYBBAHaRw8BAQdA/FqvQ5t+t2GW3r70GwcJeWoUT6qhHmdBm/Z8
+MHxTuja0D01pY2hhZWwgTWNTaGFuZYi1BBMWCgBdFiEE8ZUPn6OKKNojA0McGleU
+EXoii5kFAmrmuMAbFIAAAAAABAAObWFudTIsMi41KzEuMTIsMiwxAhsDBQkDwmcA
+BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEBpXlBF6IouZpiIBAMpceqll
+f38+qaYIUuMXsIe3audSSVeImtLOJjvWVAZ3AQDCF5gsXWGkcTPjX/ncoxECRiKm
+Eh6dAveep1wPSDJVD7g4BGrmuMASCisGAQQBl1UBBQEBB0BTX2GxsflG7c0S3wrb
+epX1kbb0c0/gL4ULU8xADjHbJAMBCAeIlAQYFgoAPBYhBPGVD5+jiijaIwNDHBpX
+lBF6IouZBQJq5rjAGxSAAAAAAAQADm1hbnUyLDIuNSsxLjEyLDIsMQIbDAAKCRAa
+V5QReiKLmWVeAP9Uw6HN7d1HYwxK+DMtRQMzzk9z8Zk8yXNkGUe8titG7AD+O5g7
+EM8dBOSKqPmDNmXcEbMTTZAwbaKJxSyUCOtw5gY=
+=27t1
+-----END PGP PUBLIC KEY BLOCK-----`;
+
+document.getElementById("contact-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const status = document.getElementById("status");
+  const button = document.getElementById("submit");
+  const message = document.getElementById("message").value.trim();
+  const replyTo = document.getElementById("reply-to").value.trim();
+  if (!message) { status.className = "err"; status.textContent = "Please write a message first."; return; }
+  button.disabled = true;
+  status.className = "";
+  status.textContent = "Encrypting in your browser…";
+  try {
+    // The reply address goes INSIDE the ciphertext, never in a
+    // separate field, so the delivery path never sees it.
+    const plaintext = replyTo ? "Reply to: " + replyTo + "\n\n" + message : message;
+    const key = await openpgp.readKey({ armoredKey: PUBLIC_KEY });
+    const encrypted = await openpgp.encrypt({
+      message: await openpgp.createMessage({ text: plaintext }),
+      encryptionKeys: key
+    });
+    status.textContent = "Sending ciphertext…";
+    const turnstileToken = document.querySelector("[name='cf-turnstile-response']")?.value || "";
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ciphertext: encrypted, turnstileToken })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || ("Delivery failed (HTTP " + res.status + ")"));
+    status.className = "ok";
+    status.textContent = "Sent. Your message left this page encrypted, and only I can read it.";
+    document.getElementById("contact-form").reset();
+  } catch (err) {
+    status.className = "err";
+    status.textContent = "Something went wrong: " + err.message + " Nothing was sent in the clear.";
+  } finally {
+    button.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
